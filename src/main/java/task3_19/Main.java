@@ -7,23 +7,23 @@ public class Main {
         try (Connection connection = DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/shop",
                 "postgres",
-                "postgre")) {
+                "postgresql")) {
             DBUtil.renewDatabase(connection);
-//            try (PreparedStatement preparedStatement = connection.prepareStatement(
-//                    "SELECT * FROM mobile WHERE model = ? and price < ?")) {
-//                preparedStatement.setString(1, "FRY1");
-//                preparedStatement.setFloat(2, 2000);
-//
-//                try (ResultSet resultSet = ((PreparedStatement) preparedStatement).executeQuery()) {
-//                    while (resultSet.next()) {
-//                        System.out.print("id=" + resultSet.getInt("id"));
-//                        System.out.print("; model=" + resultSet.getString("model"));
-//                        System.out.print("; price=" + resultSet.getInt("price"));
-//                        System.out.println("; manufacturer=" + resultSet.getString(
-//                                "manufacturer"));
-//                    }
-//                }
-//            }
+            try (PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM goods WHERE price < ? and quantity < ?")) {
+                preparedStatement.setFloat( 1, 100);
+                preparedStatement.setInt( 2, 200);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        System.out.print("id=" + resultSet.getInt("id"));
+                        System.out.print("; name=" + resultSet.getString("name"));
+                        System.out.print("; price=" + resultSet.getInt("price"));
+                        System.out.println("; quantity=" + resultSet.getString(
+                                "quantity"));
+                    }
+                }
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
