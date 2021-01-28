@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <File name="MyLogFileForTask" fileName="logs/task.log">
+            <MarkerFilter marker="consoleonly" onMatch="DENY" onMismatch="ACCEPT"/>
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+        <RollingFile name="MyLogRollingFile" fileName="logs/testLoggerAndDB.log"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd-HH}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%p] %c %m%n"/>
+        </Console>
+        <JDBC name="db" tableName="logs">
+            <DriverManager connectionString="jdbc:postgresql://locahost:5432/shop"
+                           driverClassName="org.postgresql.Driver"
+                           username="postgres" password="postgre"/>
+            <Column name="id" pattern="%u" isUnicode="false"/>
+            <Column name="entry_date" isEventTimestamp="true"/>
+            <Column name="logger" pattern="%logger" isUnicode="false"/>
+            <Column name="log_level" pattern="%level" isUnicode="false"/>
+            <Column name="message" pattern="%m" isUnicode="false"/>
+            <Column name="exception" pattern="%throwable" isUnicode="false"/>
+        </JDBC>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="MyLogRollingFile" level="DEBUG"/>
+            <AppenderRef ref="stdout" level="INFO"/>
+            <AppenderRef ref="db" level="ERROR"/>
+        </Root>
+    </Loggers>
+</Configuration>
