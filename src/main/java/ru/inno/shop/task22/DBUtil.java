@@ -1,20 +1,15 @@
-package task3_19;
+package ru.inno.shop.task22;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBUtil {
-
     private DBUtil() {
     }
 
     public static void renewDatabase(Connection connection) throws SQLException {
-        /*
-           Ранее перед созданием подключения к базе (connection) требовалось вручную загружать драйвер,
-           Class.forName("org.postgresql.Driver")
-           но с приходом JBDC 4.0 драйверов это более не требуется, так как драйвер загружается автоматически.
-        */
+
         int id = (int) (10*Math.random());
         try (Statement statement = connection.createStatement();
         ) {
@@ -22,6 +17,7 @@ public class DBUtil {
                     + "DROP TABLE IF EXISTS goods;"
                     + "DROP TABLE IF EXISTS managers;"
                     + "DROP TABLE IF EXISTS clients;"
+                    + "DROP TABLE IF EXISTS logs;"
                     + "\n"
                     + "CREATE TABLE goods (\n"
                     + "    id bigserial primary key,\n"
@@ -66,9 +62,19 @@ public class DBUtil {
                     + "   ('Федор', 'Достоевский' , 9999, 'pushkin@gold.com'),\n"
                     + "   ('Николай', 'Гоголь' , 969696969, 'pushkin@silver.com'),\n"
                     + "   ('Шарлиз', 'Терон' , 896236214578, 'sharliz@teron.com');\n"
+                    + "CREATE TABLE logs (\n"
+                    + "     id varchar(20) primary key,\n"
+                    + "     entry_date timestamp ,\n"
+                    + "     logger varchar(100),\n"
+                    + "     log_level varchar(100),\n"
+                    + "     message text,\n"
+                    + "     exception text);"
                     + "\n");
 
 
+        }
+        catch (SQLException e){
+            e.printStackTrace();
         }
     }
 }

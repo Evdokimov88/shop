@@ -1,17 +1,23 @@
-package task3_19;
+package ru.inno.shop.task22;
+
 
 import java.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SavePoint {
+    private static Logger logger = LoggerFactory.getLogger(SavePoint.class);
         public static void main(String[] args) throws SQLException {
             try (Connection connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/shop",
                     "postgres",
-                    "postgresql")) {
+                    "postgre")) {
                 DBUtil.renewDatabase(connection);
                 try (Statement statement = connection.createStatement()) {
                     connection.setAutoCommit(false);
                     for (int i=0; i<5; i++) {
+
+                        logger.info("Добавляем клиента...");
                         statement.executeUpdate(
                                 "INSERT INTO clients (first_name, last_name, phone, email)\n"
                                         + "VALUES\n"
@@ -28,14 +34,17 @@ public class SavePoint {
 
                         );
                     }
-
+                    logger.info("Точка сохранения...");
                     connection.rollback(savepoint);
                     connection.commit();
 
                 } catch (SQLException e) {
                     connection.rollback();
-                    e.printStackTrace();
+                    logger.error("Что-то пошло не так... "+e.getMessage());
                 }
+            }
+            catch (SQLException e){
+                logger.error("Что-то пошло не так... "+e.getMessage());
             }
         }
     }
